@@ -37,6 +37,13 @@ const getQueryNote = require('./routes/note/getQueryNote')
 const editNote = require('./routes/note/editNote')
 const deleteNote = require('./routes/note/deleteNote')
 
+const getUser = require('./routes/user/getUser')
+const addUser = require('./routes/user/addUser')
+const editUser = require('./routes/user/editUser')
+const deleteUser = require('./routes/user/deleteUser')
+const getParamUser = require('./routes/user/getParamUser')
+const getQueryUser = require('./routes/user/getQueryUser')
+
 // 👇 use app "use" method to use imported routes as application routes
 app.use(rootRoute)
 app.use(addNote)
@@ -45,6 +52,13 @@ app.use(getParamNote)
 app.use(getQueryNote)
 app.use(editNote)
 app.use(deleteNote)
+
+app.use(getUser)
+app.use(addUser)
+app.use(editUser)
+app.use(deleteUser)
+app.use(getParamUser)
+app.use(getQueryUser)
 
 /**
  * port is a door to this app, we can access it via browser or
