@@ -1,12 +1,18 @@
 const express = require('express')
 const notes = require('../../databases/notesDb')
+const authorize = require('../../middlewares/authorizationMiddleware')
+const { nanoid } = require('nanoid')
 const app = express()
 
-// 👇 handle POST request method at /note
+// 👇 use the authorize middleware in this route
+app.use(authorize) // agar bisa mengakses token/menjadikan routes ini untuk menggunakan token, kalau tidak pakai token gak akan bisa akses
+
 app.post('/note', (req, res) => {
-  // 👇 use req "body" property to access body at request to this route and save it to body variable
-  const body = req.body
-  // 👇 push into an array anything inside the body
+  const body = req.body // isi body kaya "notes" : "my first notes"
+  const user = req.user // ambil bearer token dari userdb
+  body.username = user.username
+  const id = nanoid()
+  body.id = id //nano id dari user diambil berdasarkan bearer token yg kita masukkan
   notes.push(body)
   res.send(req.body)
 })

@@ -1,0 +1,4 @@
+Environtment Variabel ada di setiap komputer.Kita juga bisa membuatnya…Variabel env yang kita buat, biasanya bersifat sementara.Artinya, hanya akan ada saat proses terjadi atau program dieksekusi.Sedangkan variabel env bawaan dari sistem operasi akan selalu ada.Karena ia dibuat saat komputer dinyalakan
+Mengamankan data lokal kita, dari orang2 yang tidak bertanggung jawab
+tapi ingat isi .env tidak di push melainkan taruh di git ignore dan isi dengan .env 
+.env  digunakan dalam lokal saja, dalam laptopmu saja, karena tidak mungkin anda push password anda ke dalam github yang bisa diakses orang bebas

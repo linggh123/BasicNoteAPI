@@ -1,0 +1,1 @@
+The destructuring assignment syntax is a JavaScript expression that makes it possible to unpack values from arrays, or properties from objects, into distinct variables. jadi menghapus suatu values atau property yang bisa diwakilkan oleh property dan values lain, jadi tidak perlu sampai bikin 2 values/property, cukup 1 saja yang dapat mewakilkan dan bisa work
