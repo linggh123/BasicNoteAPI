@@ -1,18 +1,38 @@
 const express = require('express')
-const users = require('../../databases/usersDb')
-// 👇 this is called "object destructuring", we will learn this in research task
-const { signJwt } = require('../../helpers/jwtHelper') //ambil jwt dari jwt helper, agar bisa digunakan di registerRoute
+const db = require('../../connections/dbConnection')
+const { hashPassword } = require('../../helpers/bcryptHelper')
+const { signJwt } = require('../../helpers/jwtHelper')
+const errorMiddleware = require('../../middlewares/errorMiddleware')
+const { nanoid } = require('nanoid')
 
 const app = express.Router()
 
-app.post('/auth/register', (req, res) => {
-    const body = req.body // username : blablabla, password : blablabla
-    users.push(body)
-    // 👇 use signJwt function to create a token by using inserted body as information inserted in the token
-    const token = signJwt(body)
-    // 👇 add token property in user with value of token so it can be shown at response
-    body.token = token // bearer nya itu, yg random
-    res.send(body) // responya mengeluarkan body nya itu, yang username,password, dan token nya yang bearer itu
-}) // membuat id password, dan menampilkan token
+// we can centralize all database error by adding new parameter called "next", 
+// this parameter will be filled with function by express so we can use it to 
+// pass error to error handler
+app.post('/auth/register', async (req, res, next) => { // 👈 new next parameter
+    const body = req.body
+    const password = body.password
+    const hashedPassword = await hashPassword(password)
+    body.password = hashedPassword
+    body.id = nanoid()
+    // 👇 use knex to add user inside users table
+    const insertResult = await db('users').insert(body)
+        .catch((error) => {
+            // 👇 if there's any error, pass it to error handler
+            next(error)
+        })
+    if (insertResult) {
+        const token = signJwt(body)
+        const result = {
+            ...body,
+            token
+        }
+        res.send(result)
+    }
+})
+
+// 👇 use error handler to this route, an error handler MUST be used after the route has been declared
+app.use(errorMiddleware)
 
 module.exports = app
