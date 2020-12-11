@@ -1,22 +1,31 @@
 const express = require('express')
-const users = require('../../databases/usersDb')
+const db = require('../../connections/dbConnection')
+const { comparePassword } = require('../../helpers/bcryptHelper')
 const { signJwt } = require('../../helpers/jwtHelper')
 
 const app = express.Router()
 
-app.post('/auth/login', (req, res) => {
+app.post('/auth/login', async (req, res) => {
     const body = req.body
     const username = body.username
     const password = body.password
-    // 👇 search user that have same username & password as inputted
-    const searchResult = users.find(user => (user.username == username) && (user.password == password))
+    const searchResult = await db('users').where({
+        username: username
+    }).first()
     if (searchResult) {
-        // 👇 if found, use signJwt function to create a token by using found search result as information inserted in the token
-        const token = signJwt(body)
-        body.token = token
-        res.send(body)
+        const isPasswordMatch = await comparePassword(password, searchResult.password)
+        if (isPasswordMatch) {
+            // const token = signJwt(searchResult)
+            const token = signJwt({ ...searchResult })
+            const result = {
+                ...searchResult,
+                token
+            }
+            res.send(result)
+        } else {
+            res.send('Password not match')
+        }
     } else {
-        // 👇 if not found, then tell the client
         res.send('User not found')
     }
 })
