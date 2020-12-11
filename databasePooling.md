@@ -1,0 +1,3 @@
+   >>Database connection pooling is a method used to keep database connections open so they can be reused by others.
+
+   >>Typically, opening a database connection is an expensive operation, especially if the database is remote. You have to open up network sessions, authenticate, have authorisation checked, and so on. Pooling keeps the connections active so that, when a connection is later requested, one of the active ones is used in preference to having to create another one.
