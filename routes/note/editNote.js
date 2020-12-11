@@ -1,17 +1,19 @@
 const express = require('express')
-const notes = require('../../databases/notesDb')
+const db = require('../../connections/dbConnection')
+const errorMiddleware = require('../../middlewares/errorMiddleware')
 const app = express()
 
-// 👇 handle PATCH request method at /note
-app.patch('/note/:id', (req, res) => {
-  // 👇 use req "params" property and use id property inserted at path
+app.patch('/note/:id', async (req, res, next) => {
   const id = req.params.id
-  // 👇 find the index number in notes that has the same id with the id inserted at request by using "findIndex" method
-  const editedIndex = notes.findIndex((note) => note.id === id)
-  // 👇 access the notes with found index number and change the value based on what inserted in data property at body
-  notes[editedIndex] = req.body
-  // 👇 send edited data
-  res.send(notes[editedIndex])
+  // 👇 update note with anything inside body
+  await db('notes').update(req.body).where({ id })
+    .catch((error) => {
+      next(error)
+    })
+  const updatedNote = await db('notes').where({ id })
+  res.send(updatedNote)
 })
+
+app.use(errorMiddleware)
 
 module.exports = app
